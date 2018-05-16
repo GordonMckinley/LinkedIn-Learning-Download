@@ -37,7 +37,7 @@ def login():
                     'loginCsrfParam': csrf,
                 })
     load_page(opener, 'https://www.linkedin.com/uas/login-submit', login_data)
-    print cookie_jar._cookies
+    print (cookie_jar._cookies)
     try:
         cookie = cookie_jar._cookies['.www.linkedin.com']['/']['li_at'].value
     except:
@@ -62,9 +62,9 @@ def authenticate():
 
 def load_page(opener, url, data=None):
     try:
-        response = opener.open(url)
-    except:
-        print ('[Fatal] Your IP may have been temporarily blocked')
+        response = opener.open(url) 
+    except Exception, e:
+        print ('[Fatal] Your IP may have been temporarily blocked' + '\n Exception: ' + str(e))
     try:
         if data is not None:
             response = opener.open(url, data)
@@ -105,7 +105,7 @@ def download_file(url, file_path, file_name):
                 if chunk:
                     f.write(chunk)    
     except Exception as e:
-        print 'Error. Deleting last incomplete file. Also check last created file manually for integrity'
+        print ('Error. Deleting last incomplete file. Also check last created file manually for integrity')
         os.remove(file_path + '/' + file_name)     
         print(e)
 
@@ -146,7 +146,7 @@ def download_subtitles(file_path, file_name):
         subtitle_file.close()
         
     except Exception as e:
-        print 'Error. Deleting last incomplete file. Also check last created file manually for integrity'
+        print ('Error. Deleting last incomplete file. Also check last created file manually for integrity')
         os.remove(file_path + '/' + file_name)     
         print(e)
 
@@ -161,7 +161,7 @@ def download_description(file_path, file_name, description, course_url):
         description_file.close()
         
     except Exception as e:
-        print 'IO error. Deleting last incomplete file. Also check last created file manually for integrity'
+        print ('IO error. Deleting last incomplete file. Also check last created file manually for integrity')
         os.remove(file_path + '/' + file_name)     
         print(e)
 
@@ -224,31 +224,31 @@ def renameOldFolder(course_folder_path, chapter_index, chapter_name, file_path):
     # check if old type chapter folder is present; if present rename it
     file_path_alternate = course_folder_path + '\\' + '%s - %s' % (str(chapter_index).zfill(2),chapter_name)
     if len(glob.glob(course_folder_path + '/*' + chapter_name)) < 1:
-        print '||\t Old Folder Not Found'
+        print ('||\t Old Folder Not Found')
         return
     for file in glob.glob(course_folder_path + '/*' + chapter_name):
         # course present
-        print file
-        print file_path
-        print file_path_alternate
+        print (file)
+        print (file_path)
+        print (file_path_alternate)
         if file != file_path and file != file_path_alternate:
             # old chapter type - rename needed
             os.rename(file, file_path)
-            print '\t Old type chapter folder FOUND - Rename successful'
+            print ('\t Old type chapter folder FOUND - Rename successful')
             # break
 
 def renameOldFile(file_path, extractedVideoName, file_type_video, file_path_full):
     # check if old type video is present; if present rename it    
     file_path_full_alternate = file_path + '\\' + file_name + file_type_video # to match return value from glob.glob
     if len(glob.glob(file_path + '/*' + extractedVideoName + file_type_video)) < 1:
-        print '||\t Old File Not Found'
+        print ('||\t Old File Not Found')
         return
     for file in glob.glob(file_path + '/*' + extractedVideoName + file_type_video):
         # video present
         if file != file_path_full and file != file_path_full_alternate:
             # old type video name - rename needed
             os.rename(file, file_path_full)
-            print '\t Old type video file FOUND - Rename successful'
+            print ('\t Old type video file FOUND - Rename successful')
             # break
 
 # runs = 0
@@ -266,7 +266,7 @@ if __name__ == '__main__':
     file_type_description = '.txt'
     
     #Read bookmarks and add them to config file (this way you can still use the manual way of adding courses). Then reload config file.
-    bookmarked_courses = parse_bookmarks()
+    # bookmarked_courses = parse_bookmarks()
     
     #Courses
     for course in config.COURSES:
@@ -296,7 +296,7 @@ if __name__ == '__main__':
             extractedCourseName = extractName(course_name)
             course_folder_path_old = '%s/%s' % (base_download_path, extractedCourseName) # old version of path to course
 
-            print '[*] __________ Starting download of course "%s" __________' % course_name        
+            print ('[*] __________ Starting download of course "%s" __________' % course_name)    
             #Check if access to full course
             if fullCourseUnlocked == True:
                 print('[*] Access to full course is GRANTED :). Start downloading.\n')
@@ -306,13 +306,13 @@ if __name__ == '__main__':
             
             # if old type name course folder is present rename it
             if os.path.exists(course_folder_path_old):
-                print '** Course directory structure is old **\n\t Renaming Course Folder \n'
+                print ('** Course directory structure is old **\n\t Renaming Course Folder \n')
                 os.rename(course_folder_path_old, course_folder_path) # will not work on windows if new type folder is already present.
-                print '\t[!] Rename Successful\n'
+                print ('\t[!] Rename Successful\n')
                  
             #Download course description
             if os.path.exists(course_folder_path + '/' + 'Description' + file_type_description):
-                    print '[!] Description file: already existing.\n'                    
+                    print ('[!] Description file: already existing.\n')                
             else:
                 print ('[*] Course description: downloading...')
                 download_description(course_folder_path, 'Description' + file_type_description, course_description, 'https://www.linkedin.com/learning/' + course)
@@ -326,7 +326,7 @@ if __name__ == '__main__':
                 print('[!] Exercise files: not available for this course.\n')
             else:                
                 if os.path.exists(course_folder_path + '/' + exercise_file_name):
-                    print '[!] Exercise file: already existing.\n'
+                    print ('[!] Exercise file: already existing.\n')
                 else:
                     print ('[*] Exercise file (%s MB): downloading...' % exercise_size)
                     download_file(exercise_file_url, course_folder_path, exercise_file_name)                    
@@ -350,7 +350,7 @@ if __name__ == '__main__':
                 extractedName = extractName(chapter_name)
 
                 if not os.path.exists(file_path):
-                    print '||\t New folder not found. Checking for old folder'                    
+                    print ('||\t New folder not found. Checking for old folder')               
                     renameOldFolder(course_folder_path, chapter_index, extractedName, file_path)
 
                 #Videos
@@ -374,12 +374,12 @@ if __name__ == '__main__':
                         extractedVideoName = extractName(video_name)
 
                         if not os.path.exists(file_path_full):
-                            print '||\t New file not found. Checking for old file'
+                            print ('||\t New file not found. Checking for old file')
                             renameOldFile(file_path, extractedVideoName, file_type_video, file_path_full)
                                             
                         print ('[*] ------ Downloading video #%s "%s"' % (str(video_index).zfill(2), video_name))
                         if os.path.exists(file_path + '/' + file_name + file_type_video):
-                            print '[!]          ->video file already existing, now checking subtitle existence'                    
+                            print ('[!]          ->video file already existing, now checking subtitle existence')           
                         else:
                             download_file(download_url, file_path, file_name + file_type_video)
                     #Download subtitles
@@ -398,5 +398,5 @@ if __name__ == '__main__':
         #automatically comment course out from download list in config file
         comment_out_finished_course(course)
         
-        print '[*] __________ Finished course "%s" __________' % course_name
+        print ('[*] __________ Finished course "%s" __________' % course_name)
                     
